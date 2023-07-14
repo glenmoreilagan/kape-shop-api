@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\Brand;
+
 class BrandController extends Controller
 {
   /**
@@ -12,15 +14,9 @@ class BrandController extends Controller
    */
   public function index()
   {
-    //
-  }
+    $brand = Brand::all();
 
-  /**
-   * Show the form for creating a new resource.
-   */
-  public function create()
-  {
-    //
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $brand]);
   }
 
   /**
@@ -28,7 +24,11 @@ class BrandController extends Controller
    */
   public function store(Request $request)
   {
-    //
+    $brand = Brand::create([
+      'brand' => $request->brand,
+    ]);
+
+    return response()->json(['status' => true, 'message' => 'Insert success.', 'data' => $brand]);
   }
 
   /**
@@ -36,15 +36,9 @@ class BrandController extends Controller
    */
   public function show(string $id)
   {
-    //
-  }
+    $brand = Brand::find($id);
 
-  /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(string $id)
-  {
-    //
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $brand]);
   }
 
   /**
@@ -52,7 +46,11 @@ class BrandController extends Controller
    */
   public function update(Request $request, string $id)
   {
-    //
+    $brand = Brand::find($id);
+    $brand->brand = $request->brand;
+    $brand->save();
+
+    return response()->json(['status' => true, 'message' => 'Update success.', 'data' => $brand]);
   }
 
   /**
@@ -60,6 +58,9 @@ class BrandController extends Controller
    */
   public function destroy(string $id)
   {
-    //
+    $brand = Brand::find($id);
+    $brand->delete();
+
+    return response()->json(['status' => true, 'message' => 'Delete success.']);
   }
 }

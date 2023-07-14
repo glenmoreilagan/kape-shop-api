@@ -22,7 +22,7 @@ class VerifyEmailController extends Controller
         }
 
         if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+            // event(new Verified($request->user()));
         }
 
         return redirect()->intended(

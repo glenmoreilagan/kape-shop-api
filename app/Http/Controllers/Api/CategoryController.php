@@ -5,61 +5,62 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\Category;
+
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    $category = Category::all();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $category]);
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(Request $request)
+  {
+    $category = Category::create([
+      'category' => $request->category,
+    ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+    return response()->json(['status' => true, 'message' => 'Insert success.', 'data' => $category]);
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+  /**
+   * Display the specified resource.
+   */
+  public function show(string $id)
+  {
+    $category = Category::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $category]);
+  }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(Request $request, string $id)
+  {
+    $category = Category::find($id);
+    $category->category = $request->category;
+    $category->save();
+
+    return response()->json(['status' => true, 'message' => 'Update success.', 'data' => $category]);
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(string $id)
+  {
+    $category = Category::find($id);
+    $category->delete();
+
+    return response()->json(['status' => true, 'message' => 'Delete success.']);
+  }
 }
