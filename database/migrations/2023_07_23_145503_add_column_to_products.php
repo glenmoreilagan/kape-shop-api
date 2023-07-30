@@ -12,10 +12,17 @@ return new class extends Migration
   public function up(): void
   {
     Schema::table('products', function (Blueprint $table) {
-      $table->double('price')->default(0)->change();
-      $table->longText('description1')->nullable()->change();
-      $table->longText('description2')->nullable()->change();
-      $table->boolean('product_status')->default(0)->change();
+      $table->after('name', function (Blueprint $table) {
+        $table->foreignId('category_id')->nullable()->constrained(
+          table: 'categories',
+          indexName: 'product_category_id'
+        )->nullOnDelete();
+        $table->foreignId('brand_id')->nullable()
+          ->constrained(
+            table: 'brands',
+            indexName: 'product_brand_id'
+          )->nullOnDelete();
+      });
     });
   }
 

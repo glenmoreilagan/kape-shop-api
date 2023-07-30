@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
 use Illuminate\Http\Request;
+
+use App\Models\Product;
+
+use App\Http\Requests\ProductRequest;
 
 class ProductController extends Controller
 {
@@ -13,7 +16,12 @@ class ProductController extends Controller
    */
   public function index()
   {
-    $product = Product::all();
+    $product = Product::with([
+      'category' => function ($q) {
+        $q->select('id', 'category');
+      }
+    ])
+      ->latest('id')->get();
 
     return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $product]);
   }
@@ -21,15 +29,17 @@ class ProductController extends Controller
   /**
    * Store a newly created resource in storage.
    */
-  public function store(Request $request)
+  public function store(ProductRequest $request)
   {
     $product = Product::create([
-      'name' => $request->name,
+      'name' => $request->productName,
       'sku' => $request->sku,
+      'category_id' => $request->category,
+      'brand_id' => $request->brand,
       'description1' => $request->description1,
       'description2' => $request->description2,
       'price' => $request->price,
-      'product_status' => $request->product_status,
+      'product_status' => $request->productStatus,
     ]);
 
     return response()->json(['status' => true, 'message' => 'Insert success.', 'data' => $product]);
