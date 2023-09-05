@@ -18,7 +18,8 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::apiResource('/brands', BrandController::class);
 Route::apiResource('/categories', CategoryController::class);
 Route::apiResource('/products', ProductController::class);
-Route::apiResource('/purchases', PurchaseController::class);
+Route::get('/purchases/edit/{document_no}/{id}', [PurchaseController::class, 'show']);
+Route::apiResource('/purchases', PurchaseController::class)->except('show');
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);

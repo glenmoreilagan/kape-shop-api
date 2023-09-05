@@ -21,7 +21,7 @@ class ProductController extends Controller
         $q->select('id', 'category');
       }
     ])
-      ->latest('id')->get();
+      ->latest('id')->limit(1000)->get();
 
     return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $product]);
   }
