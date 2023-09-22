@@ -19,7 +19,7 @@ class Purchase extends Model
   protected $table = 'purchases';
   protected $fillable = [
     'document_id',
-    'transaction_date',
+    // 'transaction_date',
     'description',
     'description1',
     'product_id',
@@ -31,13 +31,13 @@ class Purchase extends Model
     'price',
   ];
 
-  protected function transactionDate(): Attribute
-  {
-    return Attribute::make(
-      get: fn (string $value) => Carbon::parse($value),
-      set: fn (string $value) => Carbon::parse($value)->format('Y-m-d'),
-    );
-  }
+  // protected function transactionDate(): Attribute
+  // {
+  //   return Attribute::make(
+  //     get: fn (string $value) => Carbon::parse($value),
+  //     set: fn (string $value) => Carbon::parse($value)->format('Y-m-d'),
+  //   );
+  // }
 
 
   public function documentNumber()

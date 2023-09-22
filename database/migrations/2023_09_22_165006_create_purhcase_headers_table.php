@@ -11,11 +11,11 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('document_numbers', function (Blueprint $table) {
+    Schema::create('purhcase_headers', function (Blueprint $table) {
       $table->id();
-      $table->string('document_no')->nullable();
-      $table->dateTime('transaction_date')->nullable();
-      $table->string('transaction_type')->nullable();
+      $table->foreignId('document_id')->nullable()->constrained(table: 'document_numbers')->nullOnDelete();
+      $table->string('description1')->nullable();
+      $table->string('description2')->nullable();
       $table->timestamps();
     });
   }
@@ -25,6 +25,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('document_numbers');
+    Schema::dropIfExists('purhcase_headers');
   }
 };

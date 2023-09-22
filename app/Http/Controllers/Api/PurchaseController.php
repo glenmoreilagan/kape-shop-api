@@ -10,6 +10,7 @@ use Carbon\Carbon;
 // models
 use App\Models\Purchase;
 use App\Models\DocumentNumber;
+use App\Models\PurhcaseHeader;
 
 class PurchaseController extends Controller
 {
@@ -29,21 +30,23 @@ class PurchaseController extends Controller
     $head = $request->head;
     $items = $request->items;
 
-    $transaction_date = explode("-", $head['transaction_date']);
-    $transaction_date = $transaction_date[1] . "-" . $transaction_date[0] . "-" . $transaction_date[2];
-
     try {
       $document_numbers = DocumentNumber::create([
-        'document_no' => $head['document_no']
+        'document_no' => $head['document_no'],
+        'transaction_date' => Carbon::createFromFormat('m-d-Y', $head['transaction_date']),
+        'transaction_type' => 'PURCHASE',
       ]);
-      foreach ($items as $key => $item) {
-        $purchases = Purchase::create([
+
+      PurhcaseHeader::create([
           // head
           'document_id' => $document_numbers->id,
-          'transaction_date' => $transaction_date,
-          'description' => $head['description'] ?? '',
-          'description1' => $head['description1'] ?? '',
+          'description1' => $head['description'] ?? '',
+          'description2' => $head['description1'] ?? '',
+      ]);
 
+      foreach ($items as $key => $item) {
+        $purchases = Purchase::create([
+          'document_id' => $document_numbers->id,
           // items
           'product_id' => $item['id'],
           'category_id' => $item['category_id'],
@@ -68,5 +71,40 @@ class PurchaseController extends Controller
       ->first();
 
     return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $document_numbers]);
+  }
+
+  public function update(Request $request, $id)
+  {
+
+    $head = $request->head;
+    $items = $request->items;
+
+    try {
+      $document_numbers = DocumentNumber::where('id', $id)->update([
+        'document_no' => $head['document_no'],
+        'transaction_date' => Carbon::createFromFormat('m-d-Y', $head['transaction_date']),
+        'transaction_type' => 'PURCHASE',
+      ]);
+
+      foreach ($items as $key => $item) {
+        $purchases = Purchase::create([
+          // head
+          'document_id' => $document_numbers->id,
+          'description' => $head['description'] ?? '',
+          'description1' => $head['description1'] ?? '',
+
+          // items
+          'product_id' => $item['id'],
+          'category_id' => $item['category_id'],
+          'brand_id' => $item['brand_id'],
+          'quantity' => $item['quantity'],
+          'price' => $item['original_price'],
+        ]);
+      }
+
+      return response()->json(['status' => true, 'document_no' => $head['document_no']]);
+    } catch (\Throwable $th) {
+      throw $th;
+    }
   }
 }
