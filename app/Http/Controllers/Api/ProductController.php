@@ -16,12 +16,10 @@ class ProductController extends Controller
    */
   public function index()
   {
-    $product = Product::with([
-      'category' => function ($q) {
-        $q->select('id', 'category');
-      }
-    ])
-      ->latest('id')->limit(1000)->get();
+    $product = Product::with(['categories:id,category', 'brands:id,brand'])
+      ->latest('id')
+      ->limit(500)
+      ->get();
 
     return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $product]);
   }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Category;
+use App\Models\Brand;
 
 class Product extends Model
 {
@@ -24,8 +25,13 @@ class Product extends Model
   ];
 
 
-  public function category()
+  public function categories()
   {
     return $this->hasOne(Category::class, 'id', 'category_id');
+  }
+
+  public function brands()
+  {
+    return $this->hasOne(Brand::class, 'id', 'brand_id');
   }
 }

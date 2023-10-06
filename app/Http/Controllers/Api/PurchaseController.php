@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 // models
 use App\Models\Purchase;
 use App\Models\DocumentNumber;
 use App\Models\PurhcaseHeader;
+
 
 class PurchaseController extends Controller
 {
@@ -21,7 +23,9 @@ class PurchaseController extends Controller
       ->withSum('purchases', 'price')
       ->latest('id')->limit(1000)->get();
 
-    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $document_numbers]);
+      $document_number_counter = DocumentNumber::query()->where('transaction_type', 'PURCHASE')->count();
+
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $document_numbers, 'counter' => Str::padLeft($document_number_counter+1, '12', 'PRCH00000000')]);
   }
 
   public function store(Request $request)
@@ -29,6 +33,8 @@ class PurchaseController extends Controller
 
     $head = $request->head;
     $items = $request->items;
+
+    $document_number_counter = DocumentNumber::query()->where('transaction_type', 'PURCHASE')->count();
 
     try {
       $document_numbers = DocumentNumber::create([
@@ -38,10 +44,10 @@ class PurchaseController extends Controller
       ]);
 
       PurhcaseHeader::create([
-          // head
-          'document_id' => $document_numbers->id,
-          'description1' => $head['description'] ?? '',
-          'description2' => $head['description1'] ?? '',
+        // head
+        'document_id' => $document_numbers->id,
+        'description1' => $head['description'] ?? '',
+        'description2' => $head['description1'] ?? '',
       ]);
 
       foreach ($items as $key => $item) {

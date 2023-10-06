@@ -26,8 +26,8 @@ return new class extends Migration
           table: 'brands',
           indexName: 'brand_id'
         )->nullOnDelete();
-      $table->double('quantity');
-      $table->double('price');
+      $table->integer('quantity')->default(0);
+      $table->decimal('price', 20, 2)->default(0);
       $table->timestamps();
     });
   }

@@ -15,11 +15,9 @@ return new class extends Migration
       $table->id();
       $table->string('sku');
       $table->string('name');
-      $table->string('description1');
-      $table->string('description2');
-      $table->integer('brand')->nullable();
-      $table->integer('category')->nullable();
-      $table->decimal('price');
+      $table->string('description1')->nullable();
+      $table->string('description2')->nullable();
+      $table->decimal('price')->default(0);
       $table->integer('product_status')->default(0);
       $table->timestamps();
     });

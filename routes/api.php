@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DropdownMenuController;
 use App\Http\Controllers\Api\PurchaseController;
+use App\Http\Controllers\Api\SaleController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
   return $request->user();
@@ -20,6 +21,7 @@ Route::apiResource('/categories', CategoryController::class);
 Route::apiResource('/products', ProductController::class);
 Route::get('/purchases/edit/{document_no}/{id}', [PurchaseController::class, 'show']);
 Route::apiResource('/purchases', PurchaseController::class)->except('show');
+Route::apiResource('/sales', SaleController::class);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
