@@ -10,5 +10,5 @@ class Category extends Model
   use HasFactory;
 
   protected $table = 'categories';
-  protected $fillable = ['category'];
+  protected $fillable = ['uuid', 'category'];
 }

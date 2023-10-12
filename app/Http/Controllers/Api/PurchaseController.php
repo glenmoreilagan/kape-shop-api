@@ -23,9 +23,9 @@ class PurchaseController extends Controller
       ->withSum('purchases', 'price')
       ->latest('id')->limit(1000)->get();
 
-      $document_number_counter = DocumentNumber::query()->where('transaction_type', 'PURCHASE')->count();
+    $document_number_counter = DocumentNumber::query()->where('transaction_type', 'PURCHASE')->count();
 
-    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $document_numbers, 'counter' => Str::padLeft($document_number_counter+1, '12', 'PRCH00000000')]);
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $document_numbers]);
   }
 
   public function store(Request $request)
@@ -39,12 +39,12 @@ class PurchaseController extends Controller
     try {
       $document_numbers = DocumentNumber::create([
         'document_no' => $head['document_no'],
+        'uuid' => Str::uuid(),
         'transaction_date' => Carbon::createFromFormat('m-d-Y', $head['transaction_date']),
         'transaction_type' => 'PURCHASE',
       ]);
 
       PurhcaseHeader::create([
-        // head
         'document_id' => $document_numbers->id,
         'description1' => $head['description'] ?? '',
         'description2' => $head['description1'] ?? '',
@@ -53,7 +53,6 @@ class PurchaseController extends Controller
       foreach ($items as $key => $item) {
         $purchases = Purchase::create([
           'document_id' => $document_numbers->id,
-          // items
           'product_id' => $item['id'],
           'category_id' => $item['category_id'],
           'brand_id' => $item['brand_id'],
@@ -62,18 +61,16 @@ class PurchaseController extends Controller
         ]);
       }
 
-      return response()->json(['status' => true, 'document_no' => $head['document_no']]);
+      return response()->json(['status' => true, 'message' => 'Saving success.']);
     } catch (\Throwable $th) {
       throw $th;
     }
   }
 
-  public function show(string $document_no, int $id)
+  public function show(string $uuid)
   {
     $document_numbers = DocumentNumber::with('purchases.purchased_product')
-      ->where(['id' => $id, 'document_no' => $document_no])
-      ->withCount('purchases')
-      ->withSum('purchases', 'price')
+      ->where(['uuid' => $uuid])
       ->first();
 
     return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $document_numbers]);

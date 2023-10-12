@@ -14,7 +14,7 @@ class DocumentNumber extends Model
   use HasFactory;
 
   protected $table = 'document_numbers';
-  protected $fillable = ['document_no', 'transaction_date', 'transaction_type'];
+  protected $fillable = ['uuid', 'document_no', 'transaction_date', 'transaction_type'];
 
   protected function transactionDate(): Attribute
   {

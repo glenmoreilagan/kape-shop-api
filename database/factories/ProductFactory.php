@@ -23,17 +23,15 @@ class ProductFactory extends Factory
    */
   public function definition(): array
   {
-    // $brand = Brand::inRandomOrder()->take(1)->first();
-    // $category = Category::inRandomOrder()->take(1)->first();
-
     return [
-      'sku' => Str::random(32),
+      'sku' => Str::random(8),
+      'uuid' => Str::uuid(),
       'name' => fake()->word(),
       'description1' => fake()->sentence(10),
       'description2' => fake()->sentence(12),
-      // 'brand' => $brand->id,
-      // 'category' => $category->id,
-      'price' => fake()->randomFloat(2, 1, 1000),
+      'brand_id' => rand(1, 10),
+      'category_id' => rand(1, 10),
+      'price' => fake()->randomFloat(2, 100, 1000),
       'product_status' => fake()->numberBetween(0, 1),
     ];
   }

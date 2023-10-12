@@ -9,6 +9,8 @@ use App\Models\Product;
 
 use App\Http\Requests\ProductRequest;
 
+use Illuminate\Support\Str;
+
 class ProductController extends Controller
 {
   /**
@@ -30,14 +32,15 @@ class ProductController extends Controller
   public function store(ProductRequest $request)
   {
     $product = Product::create([
-      'name' => $request->productName,
+      'name' => $request->name,
       'sku' => $request->sku,
-      'category_id' => $request->category,
-      'brand_id' => $request->brand,
+      'uuid' => Str::uuid(),
+      'category_id' => $request->category_id,
+      'brand_id' => $request->brand_id,
       'description1' => $request->description1,
       'description2' => $request->description2,
       'price' => $request->price,
-      'product_status' => $request->productStatus,
+      'product_status' => $request->product_status,
     ]);
 
     return response()->json(['status' => true, 'message' => 'Insert success.', 'data' => $product]);
@@ -48,7 +51,7 @@ class ProductController extends Controller
    */
   public function show(string $id)
   {
-    $product = Product::find($id);
+    $product = Product::where('uuid', $id)->first();
 
     return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $product]);
   }
@@ -61,6 +64,8 @@ class ProductController extends Controller
     $product = Product::find($id);
     $product->name = $request->name;
     $product->sku = $request->sku;
+    $product->category_id = $request->category_id;
+    $product->brand_id = $request->brand_id;
     $product->description1 = $request->description1;
     $product->description2 = $request->description2;
     $product->price = $request->price;

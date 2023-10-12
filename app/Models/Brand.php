@@ -10,5 +10,5 @@ class Brand extends Model
   use HasFactory;
 
   protected $table = 'brands';
-  protected $fillable = ['brand'];
+  protected $fillable = ['uuid', 'brand'];
 }
