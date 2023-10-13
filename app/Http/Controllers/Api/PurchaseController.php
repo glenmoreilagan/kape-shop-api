@@ -40,14 +40,10 @@ class PurchaseController extends Controller
       $document_numbers = DocumentNumber::create([
         'document_no' => $head['document_no'],
         'uuid' => Str::uuid(),
-        'transaction_date' => Carbon::createFromFormat('m-d-Y', $head['transaction_date']),
+        'description1' => $head['description1'] ?? '',
+        'description2' => $head['description2'] ?? '',
+        'transaction_date' => Carbon::parse($head['transaction_date']),
         'transaction_type' => 'PURCHASE',
-      ]);
-
-      PurhcaseHeader::create([
-        'document_id' => $document_numbers->id,
-        'description1' => $head['description'] ?? '',
-        'description2' => $head['description1'] ?? '',
       ]);
 
       foreach ($items as $key => $item) {

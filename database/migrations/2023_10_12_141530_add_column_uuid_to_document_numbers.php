@@ -13,7 +13,15 @@ return new class extends Migration
   {
     Schema::table('document_numbers', function (Blueprint $table) {
       $table->after('id', function (Blueprint $table) {
-        $table->uuid();
+        if (!Schema::hasColumn('document_numbers', 'uuid')) {
+          $table->uuid();
+        }
+        if (!Schema::hasColumn('document_numbers', 'description1')) {
+          $table->string('description1')->nullable();
+        }
+        if (!Schema::hasColumn('document_numbers', 'description2')) {
+          $table->string('description2')->nullable();
+        }
       });
     });
   }

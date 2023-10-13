@@ -14,13 +14,13 @@ class DocumentNumber extends Model
   use HasFactory;
 
   protected $table = 'document_numbers';
-  protected $fillable = ['uuid', 'document_no', 'transaction_date', 'transaction_type'];
+  protected $fillable = ['uuid', 'description1', 'description2', 'document_no', 'transaction_date', 'transaction_type'];
 
   protected function transactionDate(): Attribute
   {
     return Attribute::make(
-      get: fn (string $value) => Carbon::parse($value)->format('m-d-Y'),
-      set: fn (string $value) => Carbon::parse($value),
+      get: fn (string $value) => Carbon::parse($value)->format('Y-m-d'),
+      // set: fn (string $value) => Carbon::parse($value),
     );
   }
 

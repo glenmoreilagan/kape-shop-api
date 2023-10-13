@@ -16,16 +16,16 @@ return new class extends Migration
       $table->foreignId('product_id')->nullable()->constrained(
         table: 'products',
         indexName: 'product_id'
-      )->nullOnDelete()->onUpdate('no action');
+      )->nullOnDelete();
       $table->foreignId('category_id')->nullable()->constrained(
         table: 'categories',
         indexName: 'category_id'
-      )->nullOnDelete()->onUpdate('no action');
+      )->nullOnDelete();
       $table->foreignId('brand_id')->nullable()
         ->constrained(
           table: 'brands',
           indexName: 'brand_id'
-        )->nullOnDelete()->onUpdate('no action');
+        )->nullOnDelete();
       $table->integer('quantity')->default(0);
       $table->decimal('price', 20, 2)->default(0);
       $table->timestamps();

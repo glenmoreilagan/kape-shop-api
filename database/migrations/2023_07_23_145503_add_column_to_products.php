@@ -16,12 +16,12 @@ return new class extends Migration
         $table->foreignId('category_id')->nullable()->constrained(
           table: 'categories',
           indexName: 'product_category_id'
-        )->nullOnDelete()->onUpdate('no action');
+        )->nullOnDelete();
         $table->foreignId('brand_id')->nullable()
           ->constrained(
             table: 'brands',
             indexName: 'product_brand_id'
-          )->nullOnDelete()->onUpdate('no action');
+          )->nullOnDelete();
       });
     });
   }
