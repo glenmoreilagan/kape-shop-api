@@ -30,37 +30,16 @@ class PurchaseController extends Controller
 
   public function store(Request $request)
   {
+    DocumentNumber::create([
+      'document_no' => $request->document_no,
+      'uuid' => Str::uuid(),
+      'description1' => $request->description1 ?? '',
+      'description2' => $request->description2 ?? '',
+      'transaction_date' => Carbon::parse($request->transaction_date),
+      'transaction_type' => 'PURCHASE',
+    ]);
 
-    $head = $request->head;
-    $items = $request->items;
-
-    $document_number_counter = DocumentNumber::query()->where('transaction_type', 'PURCHASE')->count();
-
-    try {
-      $document_numbers = DocumentNumber::create([
-        'document_no' => $head['document_no'],
-        'uuid' => Str::uuid(),
-        'description1' => $head['description1'] ?? '',
-        'description2' => $head['description2'] ?? '',
-        'transaction_date' => Carbon::parse($head['transaction_date']),
-        'transaction_type' => 'PURCHASE',
-      ]);
-
-      foreach ($items as $key => $item) {
-        $purchases = Purchase::create([
-          'document_id' => $document_numbers->id,
-          'product_id' => $item['id'],
-          'category_id' => $item['category_id'],
-          'brand_id' => $item['brand_id'],
-          'quantity' => $item['quantity'],
-          'price' => $item['original_price'],
-        ]);
-      }
-
-      return response()->json(['status' => true, 'message' => 'Saving success.']);
-    } catch (\Throwable $th) {
-      throw $th;
-    }
+    return response()->json(['status' => true, 'message' => 'Saving success.']);
   }
 
   public function show(string $uuid)
@@ -74,36 +53,42 @@ class PurchaseController extends Controller
 
   public function update(Request $request, $id)
   {
+    DocumentNumber::where('id', $id)->update([
+      'document_no' => $request->document_no,
+      'description1' => $request->description1 ?? '',
+      'description2' => $request->description2 ?? '',
+      'transaction_date' => Carbon::parse($request->transaction_date),
+    ]);
 
-    $head = $request->head;
-    $items = $request->items;
+    return response()->json(['status' => true, 'message' => 'Update success.']);
+  }
 
-    try {
-      $document_numbers = DocumentNumber::where('id', $id)->update([
-        'document_no' => $head['document_no'],
-        'transaction_date' => Carbon::createFromFormat('m-d-Y', $head['transaction_date']),
-        'transaction_type' => 'PURCHASE',
-      ]);
+  public function updateQuantity(Request $request, $id)
+  {
+    $new_qty = $request->quantity;
+    $action = $request->action;
 
-      foreach ($items as $key => $item) {
-        $purchases = Purchase::create([
-          // head
-          'document_id' => $document_numbers->id,
-          'description' => $head['description'] ?? '',
-          'description1' => $head['description1'] ?? '',
+    switch ($action) {
+      case 'increment':
+        Purchase::where('id', $id)->increment('quantity', $new_qty);
+        break;
+      case 'decrement':
+        Purchase::where('id', $id)->decrement('quantity', $new_qty);
+        break;
+      case 'manual':
+        Purchase::where('id', $id)->update(['quantity' => $new_qty]);
+        break;
 
-          // items
-          'product_id' => $item['id'],
-          'category_id' => $item['category_id'],
-          'brand_id' => $item['brand_id'],
-          'quantity' => $item['quantity'],
-          'price' => $item['original_price'],
-        ]);
-      }
-
-      return response()->json(['status' => true, 'document_no' => $head['document_no']]);
-    } catch (\Throwable $th) {
-      throw $th;
+      default:
+        return response()->json(['message' => 'No Action Found.'], 400);
+        break;
     }
+
+    return response()->noContent();
+  }
+
+  public function addProducts(Request $request)
+  {
+    return $request->all();
   }
 }
