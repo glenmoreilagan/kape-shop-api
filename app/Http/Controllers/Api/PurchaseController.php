@@ -11,8 +11,9 @@ use Illuminate\Support\Str;
 // models
 use App\Models\Purchase;
 use App\Models\DocumentNumber;
+use App\Models\Product;
 use App\Models\PurhcaseHeader;
-
+use Illuminate\Support\Facades\App;
 
 class PurchaseController extends Controller
 {
@@ -30,7 +31,7 @@ class PurchaseController extends Controller
 
   public function store(Request $request)
   {
-    DocumentNumber::create([
+    $document = DocumentNumber::create([
       'document_no' => $request->document_no,
       'uuid' => Str::uuid(),
       'description1' => $request->description1 ?? '',
@@ -39,16 +40,18 @@ class PurchaseController extends Controller
       'transaction_type' => 'PURCHASE',
     ]);
 
-    return response()->json(['status' => true, 'message' => 'Saving success.']);
+    return response()->json($document);
   }
 
   public function show(string $uuid)
   {
-    $document_numbers = DocumentNumber::with('purchases.purchased_product')
-      ->where(['uuid' => $uuid])
-      ->first();
+    $document = DocumentNumber::where(['uuid' => $uuid])->first();
 
-    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $document_numbers]);
+    abort_if(!$document, '404', 'Document not found.');
+
+    $purchases = $this->getPurhcasesByDocumentId($document->id);
+
+    return response()->json(['document' => $document, 'purchases' => $purchases]);
   }
 
   public function update(Request $request, $id)
@@ -89,6 +92,42 @@ class PurchaseController extends Controller
 
   public function addProducts(Request $request)
   {
-    return $request->all();
+    $document_id = $request->document['id'];
+    $products = $request->products;
+
+    foreach ($products as $key => $row) {
+      Purchase::create([
+        'document_id' => $document_id,
+        'product_id' => $row['id'],
+        'category_id' => $row['category_id'],
+        'brand_id' => $row['brand_id'],
+        'quantity' => 1,
+        'price' => $row['price'],
+      ]);
+    }
+
+
+    $purchases = $this->getPurhcasesByDocumentId($document_id);
+    
+    return response()->json($purchases);
+  }
+
+  private function getPurhcasesByDocumentId($document_id)
+  {
+    return Purchase::where('purchases.document_id', $document_id)
+      ->join(App(Product::class)->getTable() . ' as product', 'product.id', '=', 'purchases.product_id')
+      ->select([
+        'purchases.id as id',
+        'purchases.category_id as category_id',
+        'purchases.brand_id as brand_id',
+        'purchases.price as price',
+        'purchases.quantity as quantity',
+
+        'product.id as product_id',
+        'product.name as name',
+        'product.uuid as product_uuid',
+        'product.sku as sku',
+      ])
+      ->get();
   }
 }

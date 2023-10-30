@@ -20,14 +20,12 @@ class Purchase extends Model
   protected $fillable = [
     'document_id',
     // 'transaction_date',
-    'description',
-    'description1',
+    // 'description',
+    // 'description1',
     'product_id',
     'category_id',
     'brand_id',
     'quantity',
-    'category_id',
-    'brand_id',
     'price',
   ];
 
