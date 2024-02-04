@@ -14,6 +14,9 @@ use App\Models\DocumentNumber;
 use App\Models\Product;
 use App\Models\PurhcaseHeader;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use League\CommonMark\Node\Block\Document;
 
 class PurchaseController extends Controller
 {
@@ -24,21 +27,26 @@ class PurchaseController extends Controller
       ->withSum('purchases', 'price')
       ->latest('id')->limit(1000)->get();
 
-    $document_number_counter = DocumentNumber::query()->where('transaction_type', 'PURCHASE')->count();
-
-    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $document_numbers]);
+    return response()->json($document_numbers);
   }
 
   public function store(Request $request)
   {
-    $document = DocumentNumber::create([
-      'document_no' => $request->document_no,
-      'uuid' => Str::uuid(),
-      'description1' => $request->description1 ?? '',
-      'description2' => $request->description2 ?? '',
-      'transaction_date' => Carbon::parse($request->transaction_date),
-      'transaction_type' => 'PURCHASE',
-    ]);
+    DB::beginTransaction();
+    try {
+      $document = DocumentNumber::create([
+        'document_no' => Str::ulid(),
+        'uuid' => Str::uuid(),
+        'description1' => $request->description1 ?? '',
+        'description2' => $request->description2 ?? '',
+        'transaction_date' => Carbon::parse($request->transaction_date),
+        'transaction_type' => 'PURCHASE',
+      ]);
+      DB::commit();
+    } catch (\Throwable $th) {
+      DB::rollback();
+      Log::error($th->getMessage());
+    }
 
     return response()->json($document);
   }
@@ -56,14 +64,22 @@ class PurchaseController extends Controller
 
   public function update(Request $request, $id)
   {
-    DocumentNumber::where('id', $id)->update([
-      'document_no' => $request->document_no,
-      'description1' => $request->description1 ?? '',
-      'description2' => $request->description2 ?? '',
-      'transaction_date' => Carbon::parse($request->transaction_date),
-    ]);
+    DB::beginTransaction();
+    try {
+      DocumentNumber::where('id', $id)->update([
+        // 'document_no' => Str::ulid(),
+        'description1' => $request->description1 ?? '',
+        'description2' => $request->description2 ?? '',
+        'transaction_date' => Carbon::parse($request->transaction_date),
+      ]);
+      $purchases = DocumentNumber::find($id);
+      DB::commit();
+    } catch (\Throwable $th) {
+      DB::rollback();
+      Log::error($th->getMessage());
+    }
 
-    return response()->json(['status' => true, 'message' => 'Update success.']);
+    return response()->json($purchases);
   }
 
   public function updateQuantity(Request $request, $id)
@@ -108,7 +124,7 @@ class PurchaseController extends Controller
 
 
     $purchases = $this->getPurhcasesByDocumentId($document_id);
-    
+
     return response()->json($purchases);
   }
 
