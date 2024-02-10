@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 use App\Models\Category;
 
@@ -14,7 +15,7 @@ class CategoryController extends Controller
    */
   public function index()
   {
-    $category = Category::all();
+    $category = Category::withCount('products')->latest()->get();
 
     return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $category]);
   }
@@ -25,6 +26,7 @@ class CategoryController extends Controller
   public function store(Request $request)
   {
     $category = Category::create([
+      'uuid' => Str::uuid(),
       'category' => $request->category,
     ]);
 
