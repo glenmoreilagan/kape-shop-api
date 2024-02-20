@@ -7,5 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sale extends Model
 {
-    use HasFactory;
+  use HasFactory;
+
+  protected $table = 'sales';
+
+  protected $fillable = [
+    'document_id',
+    'product_id',
+    'quantity',
+    'price',
+    'created_by',
+  ];
 }

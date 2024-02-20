@@ -19,16 +19,20 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::put('/purchases/update-quantity/{id}', [PurchaseController::class, 'updateQuantity']);
 Route::post('/purchases/add-product', [PurchaseController::class, 'addProducts']);
 
-Route::apiResource('/brands', BrandController::class);
-Route::apiResource('/categories', CategoryController::class);
-Route::apiResource('/products', ProductController::class);
-Route::apiResource('/purchases', PurchaseController::class);
-Route::apiResource('/sales', SaleController::class);
 
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
 
-Route::get('/dropdown/categories', [DropdownMenuController::class, 'categories']);
-Route::get('/dropdown/brands', [DropdownMenuController::class, 'brands']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+  Route::apiResource('/brands', BrandController::class);
+  Route::apiResource('/categories', CategoryController::class);
+  Route::apiResource('/products', ProductController::class);
+  Route::apiResource('/purchases', PurchaseController::class);
+  Route::apiResource('/sales', SaleController::class);
+
+  Route::get('/dropdown/categories', [DropdownMenuController::class, 'categories']);
+  Route::get('/dropdown/brands', [DropdownMenuController::class, 'brands']);
+});
