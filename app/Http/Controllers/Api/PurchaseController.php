@@ -35,8 +35,8 @@ class PurchaseController extends Controller
     DB::beginTransaction();
     try {
       $document = DocumentNumber::create([
-        'document_no' => Str::ulid(),
         'uuid' => Str::uuid(),
+        'document_no' => Str::ulid(),
         'description1' => $request->description1 ?? '',
         'description2' => $request->description2 ?? '',
         'transaction_date' => Carbon::parse($request->transaction_date),

@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Sale;
+use App\Models\DocumentNumber;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class SaleController extends Controller
 {
@@ -13,13 +17,20 @@ class SaleController extends Controller
   {
     $payload = $request->data;
 
+    $document_number = DocumentNumber::create([
+      'uuid' => Str::uuid(),
+      'document_no' => Str::ulid(),
+      'transaction_date' => Carbon::now(),
+      'transaction_type' => 'SALES',
+    ]);
+
     foreach ($payload as $key => $row) {
-      $sale =  Sale::create([
-        'document_id' => 1,
+      Sale::create([
+        'document_id' => $document_number->id,
         "product_id" => $row['id'],
         "price" => $row['price'],
         "quantity" => $row['qty'],
-        "created_by" => 5,
+        "created_by" => auth()->id(),
       ]);
     }
 

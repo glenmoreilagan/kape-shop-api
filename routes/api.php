@@ -19,13 +19,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::put('/purchases/update-quantity/{id}', [PurchaseController::class, 'updateQuantity']);
 Route::post('/purchases/add-product', [PurchaseController::class, 'addProducts']);
 
-
-
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
-
-
 Route::middleware(['auth:sanctum'])->group(function () {
   Route::apiResource('/brands', BrandController::class);
   Route::apiResource('/categories', CategoryController::class);
