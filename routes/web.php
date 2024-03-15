@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return ['Laravel' => app()->version(), csrf_token()];
+  return ['Laravel' => app()->version()];
 });
+
+Route::post('/auth/callback', [AuthenticatedSessionController::class, 'socialMediaLogin'])
+  ->middleware('guest');
 
 require __DIR__ . '/auth.php';

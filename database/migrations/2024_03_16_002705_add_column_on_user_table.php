@@ -11,11 +11,10 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::table('sales', function (Blueprint $table) {
-      $table->after('price', function (Blueprint $table) {
-        if (!Schema::hasColumn('document_numbers', 'uuid')) {
-          $table->foreignId('created_by')->constrained('users');
-        }
+    Schema::table('users', function (Blueprint $table) {
+      $table->after('remember_token', function (Blueprint $table) {
+        $table->string('provider');
+        $table->string('provider_user_id');
       });
     });
   }
@@ -25,8 +24,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::table('sales', function (Blueprint $table) {
-      //
-    });
+    //
   }
 };

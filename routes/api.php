@@ -11,20 +11,27 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DropdownMenuController;
 use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\SaleController;
+use App\Models\User;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
   return $request->user();
 });
 
-Route::put('/purchases/update-quantity/{id}', [PurchaseController::class, 'updateQuantity']);
-Route::post('/purchases/add-product', [PurchaseController::class, 'addProducts']);
+Route::get('/test', function () {
+  return User::query()->where('id', 10)->value('email');
+});
 
 Route::middleware(['auth:sanctum'])->group(function () {
   Route::apiResource('/brands', BrandController::class);
   Route::apiResource('/categories', CategoryController::class);
   Route::apiResource('/products', ProductController::class);
-  Route::apiResource('/purchases', PurchaseController::class);
   Route::apiResource('/sales', SaleController::class);
+
+  Route::prefix('purchases')->group(function () {
+    Route::put('/update-quantity/{id}', [PurchaseController::class, 'updateQuantity']);
+    Route::post('/add-product', [PurchaseController::class, 'addProducts']);
+  });
+  Route::apiResource('/purchases', PurchaseController::class);
 
   Route::get('/dropdown/categories', [DropdownMenuController::class, 'categories']);
   Route::get('/dropdown/brands', [DropdownMenuController::class, 'brands']);
