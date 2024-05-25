@@ -18,8 +18,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\CommonMark\Node\Block\Document;
 
+use App\Traits\GenerateDocumentNumber;
+
+use App\Enums\TransactionTypeEnum;
+
 class PurchaseController extends Controller
 {
+  use GenerateDocumentNumber;
+
   public function index()
   {
     $document_numbers = DocumentNumber::with('purchases')
@@ -36,11 +42,11 @@ class PurchaseController extends Controller
     try {
       $document = DocumentNumber::create([
         'uuid' => Str::uuid(),
-        'document_no' => Str::ulid(),
+        'document_no' => $request->document_no,
         'description1' => $request->description1 ?? '',
         'description2' => $request->description2 ?? '',
         'transaction_date' => Carbon::parse($request->transaction_date),
-        'transaction_type' => 'PURCHASE',
+        'transaction_type' => TransactionTypeEnum::PURCHASES,
       ]);
       DB::commit();
     } catch (\Throwable $th) {
@@ -57,7 +63,7 @@ class PurchaseController extends Controller
 
     abort_if(!$document, '404', 'Document not found.');
 
-    $purchases = $this->getPurhcasesByDocumentId($document->id);
+    $purchases = $this->getPurchasesByDocumentId($document->id);
 
     return response()->json(['document' => $document, 'purchases' => $purchases]);
   }
@@ -123,12 +129,12 @@ class PurchaseController extends Controller
     }
 
 
-    $purchases = $this->getPurhcasesByDocumentId($document_id);
+    $purchases = $this->getPurchasesByDocumentId($document_id);
 
     return response()->json($purchases);
   }
 
-  private function getPurhcasesByDocumentId($document_id)
+  private function getPurchasesByDocumentId($document_id)
   {
     return Purchase::where('purchases.document_id', $document_id)
       ->join(App(Product::class)->getTable() . ' as product', 'product.id', '=', 'purchases.product_id')
@@ -145,5 +151,12 @@ class PurchaseController extends Controller
         'product.sku as sku',
       ])
       ->get();
+  }
+
+  public function generateDocumentNumber()
+  {
+    $document_number = $this->getDocumentNumber();
+
+    return response()->json($document_number);
   }
 }

@@ -30,6 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::prefix('purchases')->group(function () {
     Route::put('/update-quantity/{id}', [PurchaseController::class, 'updateQuantity']);
     Route::post('/add-product', [PurchaseController::class, 'addProducts']);
+    Route::get('/generate-document-number', [PurchaseController::class, 'generateDocumentNumber']);
   });
   Route::apiResource('/purchases', PurchaseController::class);
 

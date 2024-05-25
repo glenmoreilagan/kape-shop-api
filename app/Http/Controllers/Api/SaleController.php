@@ -11,6 +11,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
+use App\Enums\TransactionTypeEnum;
+
 class SaleController extends Controller
 {
   public function store(Request $request)
@@ -21,7 +23,7 @@ class SaleController extends Controller
       'uuid' => Str::uuid(),
       'document_no' => Str::ulid(),
       'transaction_date' => Carbon::now(),
-      'transaction_type' => 'SALES',
+      'transaction_type' => TransactionTypeEnum::SALES,
     ]);
 
     foreach ($payload as $key => $row) {
