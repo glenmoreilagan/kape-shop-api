@@ -13,9 +13,7 @@ return new class extends Migration
   {
     Schema::table('sales', function (Blueprint $table) {
       $table->after('price', function (Blueprint $table) {
-        if (!Schema::hasColumn('document_numbers', 'uuid')) {
-          $table->foreignId('created_by')->constrained('users');
-        }
+        $table->foreignId('created_by')->constrained('users');
       });
     });
   }
