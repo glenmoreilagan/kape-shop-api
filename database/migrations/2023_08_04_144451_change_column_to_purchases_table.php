@@ -12,7 +12,9 @@ return new class extends Migration
   public function up(): void
   {
     Schema::table('purchases', function (Blueprint $table) {
-      $table->dropColumn('document_no');
+      if (Schema::hasColumn('purchases', 'document_no')) {
+        $table->dropColumn('document_no');
+      }
       $table->after('id', function (Blueprint $table) {
         $table->foreignId('document_id')->nullable()->constrained(
           table: 'document_numbers',
