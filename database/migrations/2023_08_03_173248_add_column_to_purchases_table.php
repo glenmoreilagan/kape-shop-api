@@ -12,12 +12,7 @@ return new class extends Migration
   public function up(): void
   {
     Schema::table('purchases', function (Blueprint $table) {
-      $table->after('id', function (Blueprint $table) {
-        // $table->string('document_no')->nullable();
-        // $table->date('transaction_date')->nullable();
-        // $table->string('description')->default('');
-        // $table->string('description1')->default('');
-      });
+      // 
     });
   }
 

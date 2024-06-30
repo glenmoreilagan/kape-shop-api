@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::table('users', function (Blueprint $table) {
       $table->after('remember_token', function (Blueprint $table) {
-        $table->string('provider');
-        $table->string('provider_user_id');
+        $table->string('provider')->nullable();
+        $table->string('provider_user_id')->nullable();
       });
     });
   }
@@ -24,6 +24,9 @@ return new class extends Migration
    */
   public function down(): void
   {
-    //
+    Schema::table('users', function (Blueprint $table) {
+      $table->dropColumn('provider');
+      $table->dropColumn('provider_user_id');
+    });
   }
 };

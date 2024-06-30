@@ -12,10 +12,7 @@ return new class extends Migration
   public function up(): void
   {
     Schema::table('products', function (Blueprint $table) {
-      // $table->double('price')->default(0)->change();
-      // $table->longText('description1')->nullable()->change();
-      // $table->longText('description2')->nullable()->change();
-      // $table->boolean('product_status')->default(0)->change();
+      // 
     });
   }
 

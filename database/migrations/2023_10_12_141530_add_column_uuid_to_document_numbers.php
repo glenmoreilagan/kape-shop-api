@@ -13,15 +13,9 @@ return new class extends Migration
   {
     Schema::table('document_numbers', function (Blueprint $table) {
       $table->after('id', function (Blueprint $table) {
-        if (!Schema::hasColumn('document_numbers', 'uuid')) {
-          $table->uuid();
-        }
-        if (!Schema::hasColumn('document_numbers', 'description1')) {
-          $table->string('description1')->nullable();
-        }
-        if (!Schema::hasColumn('document_numbers', 'description2')) {
-          $table->string('description2')->nullable();
-        }
+        $table->uuid();
+        $table->string('description1')->nullable();
+        $table->string('description2')->nullable();
       });
     });
   }
@@ -32,7 +26,9 @@ return new class extends Migration
   public function down(): void
   {
     Schema::table('document_numbers', function (Blueprint $table) {
-      //
+      $table->dropColumn('uuid');
+      $table->dropColumn('description1');
+      $table->dropColumn('description2');
     });
   }
 };

@@ -9,6 +9,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,5 +28,6 @@ class DatabaseSeeder extends Seeder
     Brand::factory()->count(20)->create();
     Category::factory()->count(20)->create();
     Product::factory()->count(20)->create();
+    User::factory()->count(20)->create();
   }
 }
