@@ -19,7 +19,9 @@ class ProductController extends Controller
   public function index()
   {
     $product = Product::with(['categories:id,category', 'brands:id,brand'])
-      ->latest('id')
+      ->withSum('sales', 'price')
+      ->withCount('sales')
+      ->latest()
       ->limit(500)
       ->get();
 
@@ -59,9 +61,9 @@ class ProductController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, string $id)
+  public function update(Request $request, string $uuid)
   {
-    $product = Product::find($id);
+    $product = Product::where('uuid', $uuid)->firstOrFail();
     $product->name = $request->name;
     $product->sku = $request->sku;
     $product->category_id = $request->category_id;

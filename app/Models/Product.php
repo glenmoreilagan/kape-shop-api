@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Category;
 use App\Models\Brand;
+use App\Models\Sale;
 
 class Product extends Model
 {
@@ -34,5 +35,10 @@ class Product extends Model
   public function brands()
   {
     return $this->hasOne(Brand::class, 'id', 'brand_id');
+  }
+
+  public function sales()
+  {
+    return $this->hasMany(Sale::class, 'product_id', 'id');
   }
 }

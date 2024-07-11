@@ -22,11 +22,17 @@ Route::get('/test', function () {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+  // BRANDS
   Route::apiResource('/brands', BrandController::class);
-  Route::apiResource('/categories', CategoryController::class);
-  Route::apiResource('/products', ProductController::class);
-  Route::apiResource('/sales', SaleController::class);
 
+  //CATEGORIES 
+  Route::apiResource('/categories', CategoryController::class);
+
+  // PRODUCTS
+  Route::put('/products/{uuid}', [ProductController::class, 'update']);
+  Route::apiResource('/products', ProductController::class)->except('update');
+
+  // PURCHASES
   Route::prefix('purchases')->group(function () {
     Route::put('/update-quantity/{id}', [PurchaseController::class, 'updateQuantity']);
     Route::post('/add-product', [PurchaseController::class, 'addProducts']);
@@ -34,6 +40,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
   });
   Route::apiResource('/purchases', PurchaseController::class);
 
+  // SALES
+  Route::apiResource('/sales', SaleController::class);
+
+  // DROPDOWNS
   Route::get('/dropdown/categories', [DropdownMenuController::class, 'categories']);
   Route::get('/dropdown/brands', [DropdownMenuController::class, 'brands']);
 });

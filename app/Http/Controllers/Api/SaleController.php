@@ -15,13 +15,25 @@ use App\Enums\TransactionTypeEnum;
 
 class SaleController extends Controller
 {
+  public function index()
+  {
+    $sales = DocumentNumber::query()
+      ->withSum('sales', 'price')
+      ->withCount('sales')
+      ->limit(500)
+      ->latest()
+      ->get();
+
+    return response()->json($sales);
+  }
+
   public function store(Request $request)
   {
     $payload = $request->data;
 
     $document_number = DocumentNumber::create([
-      'uuid' => Str::uuid(),
-      'document_no' => Str::ulid(),
+      // 'uuid' => Str::uuid(),
+      // 'document_no' => Str::ulid(),
       'transaction_date' => Carbon::now(),
       'transaction_type' => TransactionTypeEnum::SALES,
     ]);
