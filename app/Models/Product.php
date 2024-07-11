@@ -9,6 +9,8 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Sale;
 
+use Illuminate\Support\Facades\DB;
+
 class Product extends Model
 {
   use HasFactory;

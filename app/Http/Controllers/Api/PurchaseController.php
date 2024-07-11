@@ -30,7 +30,7 @@ class PurchaseController extends Controller
   {
     $document_numbers = DocumentNumber::with('purchases')
       ->withCount('purchases')
-      ->withSum('purchases', 'price')
+      ->withSum('purchases', 'total')
       ->latest('id')->limit(1000)->get();
 
     return response()->json($document_numbers);
@@ -95,13 +95,25 @@ class PurchaseController extends Controller
 
     switch ($action) {
       case 'increment':
-        Purchase::where('id', $id)->increment('quantity', $new_qty);
+        // $Purchase::where('id', $id)->increment('quantity', $new_qty);
+        $result = Purchase::findOrFail($id);
+
+        $result->quantity = $result->quantity + 1;
+        $result->save();
         break;
       case 'decrement':
-        Purchase::where('id', $id)->decrement('quantity', $new_qty);
+        // $Purchase::where('id', $id)->decrement('quantity', $new_qty);
+        $result = Purchase::findOrFail($id);
+
+        $result->quantity = $result->quantity - 1;
+        $result->save();
         break;
       case 'manual':
-        Purchase::where('id', $id)->update(['quantity' => $new_qty]);
+        // $Purchase::where('id', $id)->update(['quantity' => $new_qty]);
+        $result = Purchase::findOrFail($id);
+
+        $result->quantity = $new_qty;
+        $result->save();
         break;
 
       default:

@@ -19,7 +19,7 @@ class ProductController extends Controller
   public function index()
   {
     $product = Product::with(['categories:id,category', 'brands:id,brand'])
-      ->withSum('sales', 'price')
+      ->withSum('sales', 'total')
       ->withCount('sales')
       ->latest()
       ->limit(500)

@@ -18,7 +18,7 @@ class SaleController extends Controller
   public function index()
   {
     $sales = DocumentNumber::query()
-      ->withSum('sales', 'price')
+      ->withSum('sales', 'total')
       ->withCount('sales')
       ->limit(500)
       ->latest()

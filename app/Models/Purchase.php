@@ -19,23 +19,30 @@ class Purchase extends Model
   protected $table = 'purchases';
   protected $fillable = [
     'document_id',
-    // 'transaction_date',
-    // 'description',
-    // 'description1',
     'product_id',
     'category_id',
     'brand_id',
     'quantity',
     'price',
+    'total',
   ];
 
-  // protected function transactionDate(): Attribute
-  // {
-  //   return Attribute::make(
-  //     get: fn (string $value) => Carbon::parse($value),
-  //     set: fn (string $value) => Carbon::parse($value)->format('Y-m-d'),
-  //   );
-  // }
+  protected $attributes = [
+    'total' => 0,
+  ];
+
+  protected static function boot()
+  {
+    parent::boot();
+
+    static::creating(function ($model) {
+      $model->total = $model->quantity * $model->price;
+    });
+
+    static::updating(function ($model) {
+      $model->total = $model->quantity * $model->price;
+    });
+  }
 
 
   public function documentNumber()
@@ -57,7 +64,7 @@ class Purchase extends Model
   {
     return $this->hasMany(Product::class, 'id', 'product_id');
   }
-  
+
   public function purchased_product()
   {
     return $this->hasOne(Product::class, 'id', 'product_id');

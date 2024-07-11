@@ -21,6 +21,8 @@ Route::get('/test', function () {
   return User::query()->where('id', 10)->value('email');
 });
 
+Route::apiResource('/products', ProductController::class)->except('update');
+Route::apiResource('/sales', SaleController::class);
 Route::middleware(['auth:sanctum'])->group(function () {
   // BRANDS
   Route::apiResource('/brands', BrandController::class);
@@ -30,8 +32,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
   // PRODUCTS
   Route::put('/products/{uuid}', [ProductController::class, 'update']);
-  Route::apiResource('/products', ProductController::class)->except('update');
-
+  
   // PURCHASES
   Route::prefix('purchases')->group(function () {
     Route::put('/update-quantity/{id}', [PurchaseController::class, 'updateQuantity']);
@@ -39,10 +40,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/generate-document-number', [PurchaseController::class, 'generateDocumentNumber']);
   });
   Route::apiResource('/purchases', PurchaseController::class);
-
+  
   // SALES
-  Route::apiResource('/sales', SaleController::class);
-
+  
   // DROPDOWNS
   Route::get('/dropdown/categories', [DropdownMenuController::class, 'categories']);
   Route::get('/dropdown/brands', [DropdownMenuController::class, 'brands']);
