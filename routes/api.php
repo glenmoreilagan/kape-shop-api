@@ -21,17 +21,16 @@ Route::get('/test', function () {
   return User::query()->where('id', 10)->value('email');
 });
 
-Route::apiResource('/products', ProductController::class)->except('update');
-Route::apiResource('/sales', SaleController::class);
 Route::middleware(['auth:sanctum'])->group(function () {
   // BRANDS
   Route::apiResource('/brands', BrandController::class);
-
+  
   //CATEGORIES 
   Route::apiResource('/categories', CategoryController::class);
-
+  
   // PRODUCTS
   Route::put('/products/{uuid}', [ProductController::class, 'update']);
+  Route::apiResource('/products', ProductController::class)->except('update');
   
   // PURCHASES
   Route::prefix('purchases')->group(function () {
@@ -42,6 +41,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::apiResource('/purchases', PurchaseController::class);
   
   // SALES
+  Route::apiResource('/sales', SaleController::class);
   
   // DROPDOWNS
   Route::get('/dropdown/categories', [DropdownMenuController::class, 'categories']);
