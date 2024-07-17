@@ -49,4 +49,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('/dropdown/brands', [DropdownMenuController::class, 'brands']);
 });
 
+// DASHBOARD
 Route::get('/dashboard', [DashboardController::class, 'annualSales']);
