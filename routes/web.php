@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Webhooks\ClerkController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,5 +23,7 @@ Route::get('/', function () {
 
 Route::post('/auth/callback', [AuthenticatedSessionController::class, 'socialMediaLogin'])
   ->middleware('guest');
+
+Route::post('/webhook/clerk/signin', ClerkController::class);
 
 require __DIR__ . '/auth.php';

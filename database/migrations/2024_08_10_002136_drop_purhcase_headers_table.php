@@ -11,10 +11,8 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::table('sales', function (Blueprint $table) {
-      $table->after('price', function (Blueprint $table) {
-        $table->foreignId('created_by')->nullable()->constrained('users');
-      });
+    Schema::table('purhcase_headers', function (Blueprint $table) {
+      $table->drop();
     });
   }
 
@@ -23,8 +21,8 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::table('sales', function (Blueprint $table) {
-      $table->dropColumn('created_by');
+    Schema::table('purchase_headers', function (Blueprint $table) {
+      //
     });
   }
 };

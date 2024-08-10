@@ -19,6 +19,7 @@ class Sale extends Model
     'price',
     'total',
     'created_by',
+    'user_id',
   ];
 
   protected $attributes = [

@@ -44,7 +44,7 @@ class SaleController extends Controller
         "product_id" => $row['id'],
         "price" => $row['price'],
         "quantity" => $row['qty'],
-        "created_by" => auth()->id(),
+        "user_id" => $request->user_id,
       ]);
     }
 
