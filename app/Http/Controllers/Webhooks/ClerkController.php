@@ -47,7 +47,7 @@ class ClerkController extends Controller
     }
 
     // Login with existing user in clerk
-    if ($type == self::SESSION_ENDED) {
+    if ($type == self::SESSION_CREATED) {
       $user_id = $data['user_id'];
       $user = User::query()->where('provider_user_id', $user_id)->first();
 
