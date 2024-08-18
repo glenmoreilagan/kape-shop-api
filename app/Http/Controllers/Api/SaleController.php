@@ -12,6 +12,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 use App\Enums\TransactionTypeEnum;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class SaleController extends Controller
 {
@@ -38,13 +40,15 @@ class SaleController extends Controller
       'transaction_type' => TransactionTypeEnum::SALES,
     ]);
 
+    // $user = User::query()->where('provider_user_id', $$request->user_id)->first();
+
     foreach ($payload as $key => $row) {
       Sale::create([
         'document_id' => $document_number->id,
         "product_id" => $row['id'],
         "price" => $row['price'],
         "quantity" => $row['qty'],
-        "user_id" => $request->user_id,
+        "user_id" => Auth::id(),
       ]);
     }
 

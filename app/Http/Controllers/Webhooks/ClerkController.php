@@ -40,7 +40,7 @@ class ClerkController extends Controller
         ]
       );
 
-      // Auth::login($user);
+      Auth::login($user);
 
       return $user;
     }
