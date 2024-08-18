@@ -13,7 +13,8 @@ use Illuminate\Support\Str;
 class ClerkController extends Controller
 {
   const USER_CREATED = 'user.created';
-  const USER_ENDED = 'session.ended';
+  const SESSION_CREATED = 'session.created';
+  const SESSION_ENDED = 'session.ended';
 
   public function __invoke(Request $request): void
   {
@@ -45,8 +46,16 @@ class ClerkController extends Controller
       Auth::login($user);
     }
 
+    // Login with existing user in clerk
+    if ($type == self::SESSION_ENDED) {
+      $user_id = $data['user_id'];
+      $user = User::query()->where('provider_user_id', $user_id)->first();
+
+      Auth::login($user);
+    }
+
     // Logout
-    if ($type == self::USER_ENDED) {
+    if ($type == self::SESSION_ENDED) {
       Auth::logout();
     }
   }
