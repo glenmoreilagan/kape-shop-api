@@ -13,13 +13,15 @@ use Illuminate\Support\Str;
 class ClerkController extends Controller
 {
   const USER_CREATED = 'user.created';
+  const USER_ENDED = 'session.ended';
 
-  public function __invoke(Request $request)
+  public function __invoke(Request $request): void
   {
 
     $data = $request->data;
     $type = $request->type;
 
+    // Login
     if ($type == self::USER_CREATED) {
       $user_id = $data['id'];
       $first_name = $data['first_name'];
@@ -41,10 +43,11 @@ class ClerkController extends Controller
       );
 
       Auth::login($user);
+    }
 
-      info($request->all());
-
-      return $user;
+    // Logout
+    if ($type == self::USER_ENDED) {
+      Auth::logout();
     }
   }
 }
