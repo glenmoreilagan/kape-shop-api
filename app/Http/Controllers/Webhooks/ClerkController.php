@@ -42,6 +42,8 @@ class ClerkController extends Controller
 
       Auth::login($user);
 
+      info($request->all());
+
       return $user;
     }
   }
