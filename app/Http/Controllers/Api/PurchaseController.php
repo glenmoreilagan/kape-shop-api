@@ -26,14 +26,23 @@ class PurchaseController extends Controller
 {
   use GenerateDocumentNumber;
 
-  public function index()
+  public function index(Request $request)
   {
+    $search = $request->search;
+    $offset = $request->offset;
+    $limit = $request->limit;
+
     $document_numbers = DocumentNumber::with('purchases')
+      ->where('document_no', 'LIKE', '%' . $search . '%')
       ->withCount('purchases')
       ->withSum('purchases', 'total')
-      ->latest('id')->limit(1000)->get();
+      ->latest('id');
 
-    return response()->json($document_numbers);
+    $documentCount = $document_numbers->count();
+
+    $document_numbers = $document_numbers->limit($limit)->skip($offset)->get();
+
+    return response()->json(['data' => $document_numbers, 'total_item' => $documentCount]);
   }
 
   public function store(Request $request)

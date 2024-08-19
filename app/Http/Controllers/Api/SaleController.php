@@ -17,14 +17,28 @@ use Illuminate\Support\Facades\Auth;
 
 class SaleController extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
+    $search = $request->search;
+    $offset = $request->offset;
+    $limit = $request->limit;
+
     $sales = DocumentNumber::query()
+      ->where('document_no', 'LIKE', '%' . $search . '%')
       ->withSum('sales', 'total')
       ->withCount('sales')
-      ->limit(500)
-      ->latest()
-      ->get();
+      ->latest('id');
+
+    $salesCount = $sales->count();
+
+    if ($limit > 0) {
+      $sales = $sales->limit($limit);
+      $sales = $sales->skip($offset);
+    }
+
+    $sales = $sales->get();
+
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $sales, 'total_item' => $salesCount]);
 
     return response()->json($sales);
   }

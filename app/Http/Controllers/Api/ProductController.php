@@ -16,16 +16,28 @@ class ProductController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
+    $search = $request->search;
+    $offset = $request->offset;
+    $limit = $request->limit;
+
     $product = Product::with(['categories:id,category', 'brands:id,brand'])
+      ->where('name', 'LIKE', '%' . $search . '%')
       ->withSum('sales', 'total')
       ->withCount('sales')
-      ->latest()
-      ->limit(500)
-      ->get();
+      ->latest('id');
 
-    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $product]);
+    $productCount = $product->count();
+
+    if ($limit > 0) {
+      $product = $product->limit($limit);
+      $product = $product->skip($offset);
+    }
+
+    $product = $product->get();
+
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $product, 'total_item' => $productCount]);
   }
 
   /**
