@@ -13,7 +13,7 @@ return new class extends Migration
   {
     Schema::table('sales', function (Blueprint $table) {
       $table->after('price', function (Blueprint $table) {
-        $table->foreignId('created_by')->nullable()->constrained('users');
+        $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
       });
     });
   }
