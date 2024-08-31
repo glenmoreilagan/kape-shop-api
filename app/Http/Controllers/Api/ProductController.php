@@ -22,18 +22,21 @@ class ProductController extends Controller
     $offset = $request->offset;
     $limit = $request->limit;
 
-    $product = Product::with(['categories:id,category', 'brands:id,brand'])
+    $product = Product::query();
+    
+    $productCount = $product->count();
+
+    $product = $product->with(['categories:id,category', 'brands:id,brand'])
+      ->when($limit > 0, function ($query) use ($limit, $offset) {
+        $query->limit($limit);
+        $query->skip($offset);
+      })
       ->where('name', 'LIKE', '%' . $search . '%')
       ->withSum('sales', 'total')
       ->withCount('sales')
       ->latest('id');
 
-    $productCount = $product->count();
-
-    if ($limit > 0) {
-      $product = $product->limit($limit);
-      $product = $product->skip($offset);
-    }
+    
 
     $product = $product->get();
 

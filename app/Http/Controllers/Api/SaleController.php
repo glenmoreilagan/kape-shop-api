@@ -23,24 +23,22 @@ class SaleController extends Controller
     $offset = $request->offset;
     $limit = $request->limit;
 
-    $sales = DocumentNumber::query()
+    $sales = DocumentNumber::query();
+
+    $salesCount = $sales->count();
+
+    $sales = $sales->when($limit > 0, function ($query) use ($limit, $offset) {
+      $query->limit($limit);
+      $query->skip($offset);
+    })
       ->where('document_no', 'LIKE', '%' . $search . '%')
       ->withSum('sales', 'total')
       ->withCount('sales')
       ->latest('id');
 
-    $salesCount = $sales->count();
-
-    if ($limit > 0) {
-      $sales = $sales->limit($limit);
-      $sales = $sales->skip($offset);
-    }
-
     $sales = $sales->get();
 
     return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $sales, 'total_item' => $salesCount]);
-
-    return response()->json($sales);
   }
 
   public function store(Request $request)

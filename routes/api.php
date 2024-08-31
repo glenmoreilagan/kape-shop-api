@@ -22,7 +22,7 @@ Route::get('/test', function () {
   return User::query()->where('id', 10)->value('email');
 });
 
-// Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth.clerk'])->group(function () {
   // BRANDS
   Route::apiResource('/brands', BrandController::class);
 
@@ -47,7 +47,7 @@ Route::get('/test', function () {
   // DROPDOWNS
   Route::get('/dropdown/categories', [DropdownMenuController::class, 'categories']);
   Route::get('/dropdown/brands', [DropdownMenuController::class, 'brands']);
-// });
+});
 
 // DASHBOARD
 Route::get('/dashboard', [DashboardController::class, 'annualSales']);

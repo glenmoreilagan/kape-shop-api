@@ -51,7 +51,7 @@ class ClerkController extends Controller
       $user_id = $data['user_id'];
       $user = User::query()->where('provider_user_id', $user_id)->first();
 
-      Auth::login($user);
+      // Auth::login($user);
     }
 
     // Logout

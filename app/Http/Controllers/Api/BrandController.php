@@ -13,11 +13,24 @@ class BrandController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
-    $brand = Brand::all();
+    $search = $request->search;
+    $offset = $request->offset;
+    $limit = $request->limit;
 
-    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $brand]);
+    $brand = Brand::query();
+
+    $brandCount = $brand->count();
+
+    $brand = $brand->when($limit > 0, function ($query) use ($limit, $offset) {
+      $query->limit($limit);
+      $query->skip($offset);
+    })->where('brand', 'LIKE', '%' . $search . '%')->latest();
+
+    $brand = $brand->get();
+
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $brand, 'total_item' => $brandCount]);
   }
 
   /**

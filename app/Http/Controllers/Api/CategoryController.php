@@ -13,11 +13,24 @@ class CategoryController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
-    $category = Category::withCount('products')->latest()->get();
+    $search = $request->search;
+    $offset = $request->offset;
+    $limit = $request->limit;
 
-    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $category]);
+    $category = Category::query();
+
+    $categoryCount = $category->count();
+
+    $category = $category->withCount('products')->when($limit > 0, function ($query) use ($limit, $offset) {
+      $query->limit($limit);
+      $query->skip($offset);
+    })->where('category', 'LIKE', '%' . $search . '%')->latest();
+
+    $category = $category->get();
+
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $category, 'total_item' => $categoryCount]);
   }
 
   /**

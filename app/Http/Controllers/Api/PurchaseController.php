@@ -32,15 +32,21 @@ class PurchaseController extends Controller
     $offset = $request->offset;
     $limit = $request->limit;
 
-    $document_numbers = DocumentNumber::with('purchases')
+    $document_numbers = DocumentNumber::query();
+
+    $documentCount = $document_numbers->count();
+
+    $document_numbers = $document_numbers->with('purchases')
+      ->when($limit > 0, function ($query) use ($limit, $offset) {
+        $query->limit($limit);
+        $query->skip($offset);
+      })
       ->where('document_no', 'LIKE', '%' . $search . '%')
       ->withCount('purchases')
       ->withSum('purchases', 'total')
       ->latest('id');
 
-    $documentCount = $document_numbers->count();
-
-    $document_numbers = $document_numbers->limit($limit)->skip($offset)->get();
+    $document_numbers = $document_numbers->get();
 
     return response()->json(['data' => $document_numbers, 'total_item' => $documentCount]);
   }
