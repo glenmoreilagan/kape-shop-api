@@ -60,7 +60,7 @@ class SaleController extends Controller
         "product_id" => $row['id'],
         "price" => $row['price'],
         "quantity" => $row['qty'],
-        "user_id" => Auth::id(),
+        "user_id" => Auth::id() ?? 1,
       ]);
     }
 
