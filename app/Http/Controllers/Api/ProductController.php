@@ -11,22 +11,26 @@ use App\Http\Requests\ProductRequest;
 
 use Illuminate\Support\Str;
 
+use App\Traits\StockBalance;
+use Illuminate\Support\Facades\DB;
+
 class ProductController extends Controller
 {
+  use StockBalance;
   /**
    * Display a listing of the resource.
    */
   public function index(Request $request)
   {
-    $search = $request->search;
-    $offset = $request->offset;
-    $limit = $request->limit;
+    $search = $request->search ?? '';
+    $offset = $request->offset ?? 0;
+    $limit = $request->limit ?? 10;
 
-    $product = Product::query();
-    
-    $productCount = $product->count();
+    $products = Product::query();
 
-    $product = $product->with(['categories:id,category', 'brands:id,brand'])
+    $productCount = $products->count();
+
+    $products = $products->with(['categories:id,category', 'brands:id,brand'])
       ->when($limit > 0, function ($query) use ($limit, $offset) {
         $query->limit($limit);
         $query->skip($offset);
@@ -34,13 +38,24 @@ class ProductController extends Controller
       ->where('name', 'LIKE', '%' . $search . '%')
       ->withSum('sales', 'total')
       ->withCount('sales')
-      ->latest('id');
+      ->oldest('id');
 
+    $products = $products->get();
+
+    /* 
+      I wrote this for 1 liner code
+      but I saw some comments in stackoverflow
+      says foreach is better performance for large data
+      https://stackoverflow.com/questions/18592836/eloquent-collections-each-vs-foreach 
+    */
     
+    // $products->each(fn($row) => $row->stocks = ($row->purchase_stocks_sum_quantity - $row->sale_stocks_sum_quantity));
 
-    $product = $product->get();
+    foreach ($products as $key => $product) {
+      $product->stocks = $this->stocks($product->id);
+    }
 
-    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $product, 'total_item' => $productCount]);
+    return response()->json(['status' => true, 'message' => 'Fetch success.', 'data' => $products, 'total_item' => $productCount]);
   }
 
   /**

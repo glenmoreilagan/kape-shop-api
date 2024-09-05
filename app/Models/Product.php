@@ -5,12 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use App\Models\Category;
-use App\Models\Brand;
-use App\Models\Sale;
-
-use Illuminate\Support\Facades\DB;
-
 class Product extends Model
 {
   use HasFactory;
@@ -42,5 +36,15 @@ class Product extends Model
   public function sales()
   {
     return $this->hasMany(Sale::class, 'product_id', 'id');
+  }
+
+  public function saleStocks()
+  {
+    return $this->hasMany(Sale::class, 'product_id', 'id')->groupBy('product_id');
+  }
+
+  public function purchaseStocks()
+  {
+    return $this->hasMany(Purchase::class, 'product_id', 'id')->groupBy('product_id');
   }
 }
