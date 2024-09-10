@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DropdownMenuController;
 use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\SaleController;
+use Illuminate\Support\Facades\Broadcast;
+
 use App\Models\User;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
@@ -51,3 +53,6 @@ Route::middleware(['auth.clerk'])->group(function () {
 
 // DASHBOARD
 Route::get('/dashboard', [DashboardController::class, 'annualSales']);
+
+// Broadcast::routes(['middleware' => ['auth:sanctum']]);
+Broadcast::routes();

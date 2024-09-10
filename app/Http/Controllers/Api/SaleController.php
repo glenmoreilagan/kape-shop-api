@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 use App\Enums\TransactionTypeEnum;
+use App\Events\CheckoutSuccessEvent;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -63,6 +64,9 @@ class SaleController extends Controller
         "user_id" => Auth::id() ?? 1,
       ]);
     }
+
+    $order = DocumentNumber::query()->with('sales')->where('id', $document_number->id)->get();
+    broadcast(new CheckoutSuccessEvent($order, 'New checkout success.'));
 
     return response()->noContent(201);
   }
