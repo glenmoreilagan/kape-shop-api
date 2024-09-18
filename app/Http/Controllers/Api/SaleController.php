@@ -65,8 +65,8 @@ class SaleController extends Controller
       ]);
     }
 
-    $order = DocumentNumber::query()->with('sales')->where('id', $document_number->id)->first();
-    broadcast(new CheckoutSuccessEvent($order, 'New checkout success.'));
+    // $order = DocumentNumber::query()->with('sales')->where('id', $document_number->id)->first();
+    // broadcast(new CheckoutSuccessEvent($order, 'New checkout success.'));
 
     return response()->noContent(201);
   }
