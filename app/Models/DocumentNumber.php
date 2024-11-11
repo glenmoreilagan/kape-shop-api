@@ -29,7 +29,7 @@ class DocumentNumber extends Model
 
     static::creating(function ($model) {
       $model->uuid = (string) Str::uuid();
-      $model->document_no = (string) Str::ulid();
+      $model->document_no = $model->document_no ?? (string) Str::ulid();
     });
   }
 
